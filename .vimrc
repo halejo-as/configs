@@ -1,7 +1,9 @@
 set number
 set mouse=a
 set numberwidth=1
-set clipboard=unnamed
+"set clipboard+=unnamedplus
+"copy with clipboard doest work with \"*y or \"+y
+"USE SHIFT+CTL and SHIFT+CTL+C
 syntax enable
 set showcmd
 set cursorline
@@ -15,7 +17,10 @@ set smartindent
 set tabstop=4 softtabstop=4
 set expandtab
 set foldmethod=syntax
-
+" Refresh file when change branch 
+autocmd FocusGained,BufEnter,CursorHold,CursorHoldI *
+      \ if mode() !~ '\v(c|r.?|!|t)' && getcmdwintype() == '' | checktime | endif
+set autoread
 call plug#begin('~/.vim/plugged')
 
 "Temas
@@ -28,7 +33,12 @@ Plug 'christoomey/vim-tmux-navigator'
 
 " C++
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Git
+Plug 'tpope/vim-fugitive'
+Plug 'vim-airline/vim-airline'
 call plug#end()
+
+let g:airline#extensions#branch#enabled = 1
 
 " Config Temas
 colorscheme gruvbox
