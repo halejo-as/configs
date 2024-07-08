@@ -17,6 +17,7 @@ set smartindent
 set tabstop=4 softtabstop=4
 set expandtab
 set foldmethod=syntax
+set colorcolumn=99
 
 set list
 set listchars=tab:>-
@@ -38,14 +39,17 @@ Plug 'scrooloose/nerdtree'
 Plug 'christoomey/vim-tmux-navigator'
 
 " C++
-Plug 'neoclide/coc.nvim' ", {'branch': 'release'}
+Plug 'neoclide/coc.nvim' , {'branch': 'release'}
+"Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn i'}
 " Git
 Plug 'tpope/vim-fugitive'
-Plug 'vim-airline/vim-airline'
+" Plug 'vim-airline/vim-airline'
+
+"Python 
+Plug 'https://github.com/nvie/vim-flake8.git'
 
 call plug#end()
 
-let g:airline#extensions#branch#enabled = 1
 
 " Config Temas
 colorscheme gruvbox
@@ -53,17 +57,27 @@ let g:gruvbox_contrast_dark = "hard"
 "let NERDTreeQuitOnOpen=1
 
 " COC TAB
-" use <tab> for trigger completion and navigate to the next complete item
-function! s:check_back_space() abort
+inoremap <silent><expr> <TAB>
+      \ coc#pum#visible() ? coc#pum#next(0) :
+      \ CheckBackspace() ? "\<Tab>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+" Make <CR> to accept selected completion item or notify coc.nvim to format
+" <C-g>u breaks current undo, please make your own choice
+
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+function! CheckBackspace() abort
   let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~ '\s'
+  return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
-inoremap <silent><expr> <Tab>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<Tab>" :
-      \ coc#refresh()
-
+" Use <c-space> to trigger completion
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
 
 "Maps
 let mapleader=" "
@@ -79,3 +93,6 @@ nmap <F9> :w<CR> :!g++ % -o /tmp/%< && /tmp/%< <CR>
 
 " prevent :autocmd
 set secure
+let &path = substitute($PYTHONPATH, ':', ',', 'g')
+let &path = &path . "," . substitute($AMENT_PREFIX_PATH, ':', ',', 'g')
+
