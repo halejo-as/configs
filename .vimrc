@@ -17,7 +17,7 @@ set smartindent
 set tabstop=4 softtabstop=4
 set expandtab
 set foldmethod=syntax
-set colorcolumn=99
+set colorcolumn=119
 
 set list
 set listchars=tab:>-

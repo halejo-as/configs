@@ -57,7 +57,8 @@ if [ -n "$force_color_prompt" ]; then
 fi
 
 if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+    #PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]\$ '
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\W\[\033[00m\]\$ '
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
@@ -106,7 +107,7 @@ if [ -f ~/.bash_aliases ]; then
 fi
 
 # enable programmable completion features (you don't need to enable
-# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# this, if it's already enabled in /etc/bash.bas w qhrc and /etc/profile
 # sources /etc/bash.bashrc).
 if ! shopt -oq posix; then
   if [ -f /usr/share/bash-completion/bash_completion ]; then
@@ -117,9 +118,39 @@ if ! shopt -oq posix; then
 fi
 export EDITOR=nvim
 export VISUAL=nvim
-source /opt/ros/foxy/setup.bash
-source /usr/share/colcon_cd/function/colcon_cd.sh
-export _colcon_cd_root=/opt/ros/foxy/share/
+#source /home/alejo/Programs/ament_lint/install/local_setup.sh
+#source /usr/share/colcon_cd/function/colcon_cd.sh
+#export _colcon_cd_root=/opt/ros/foxy/share/
 alias ros2dep='rosdep install --from-paths src --ignore-src -r -y'
 alias buildws='colcon build --symlink-install'
 alias rmws='rm -r build/ log/ install/'
+export RCUTILS_COLORIZED_OUTPUT=1
+alias treeGit='git log  --all --decorate --oneline --graph'
+aptDeps(){
+  apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances "$1" | grep "^\w" | sort -u
+}
+
+checkMissingPackages(){
+  deps_pkg=$(aptDeps "$1")
+  missing_pkg=""
+  for deps in $deps_pkg; do
+    if ! grep -q "$deps" packages.txt; then
+      missing_pkg="$missing_pkg $deps"
+    fi
+  done
+  echo $missing_pkg
+}
+alias pyqt='qtchooser -run-tool=designer -qt=5'
+#alias scp_pc_nav='scp -r ~/stradot_ws/install/ stradot-up-xtreme@192.168.2.3:~/stradot_ws/'
+#alias scp_pc_trac='scp -r ~/stradot_ws/install/ stradot@192.168.2.5:~/stradot_ws/'
+alias robot_domain='source ~/stradot_software/robot_ws/install/local_setup.bash; export ROS_DOMAIN_ID=3'
+export ROS_DOMAIN_ID=99
+alias pliers_decode='cd /home/alejo/stradot_software/robot_ws/src/stradot_pliers/stradot_pliers/pcgateways && python -m src.decodig_vector_state'
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+source /opt/ros/humble/setup.bash
+alias src_robot="source ~/stradot_software/robot_ws/install/local_setup.bash"
+alias src_ct="source ~/stradot_software/gui_ct/install/local_setup.bash"
+alias src_orchestrator="source ~/stradot_software/ct_ws/install/local_setup.bash"
